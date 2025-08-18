@@ -1,0 +1,34 @@
+server:
+  port: 8761
+  
+spring:
+  application:
+    name: service-registry
+eureka:
+  instance:
+    hostname: localhost
+
+  # Eureka client configuration
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+  # Security Configuration for Eureka
+  security:
+    username: admin
+    password: Admin@123
+
+# Management Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+
+  

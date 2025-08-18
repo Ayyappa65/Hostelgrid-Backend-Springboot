@@ -61,9 +61,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()  // Login, Register, Refresh open
+                        .requestMatchers("/actuator/**").permitAll()  // Allow actuator endpoints
                         .anyRequest().authenticated()
                 )
-                .apply(new JwtConfigurer(jwtTokenProvider)); // custom JWT filter
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), 
+                                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

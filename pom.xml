@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0-SNAPSHOT</version>
+		 <version>3.4.8</version> <!-- compatible with Spring Cloud 2024.0.0 -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -34,20 +34,24 @@
 	<!-- Managing Modules accordingly based on functionality -->
 	<modules>
 		<module>common-module</module>
+		<module>service-registry</module>
+		<module>api-gateway</module>
 		<module>auth-service</module>
-
 	</modules>
 
 	<!-- Managing Dependency Management for Modules -->
 	<dependencyManagement>
 		<dependencies>
+
+		    <!-- Spring Cloud Dependencies -->
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>4.0.0-SNAPSHOT</version>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2024.0.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
@@ -63,6 +67,11 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+        <!-- Eureka Client for Service Discovery -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
 
 		<!-- Enables Spring Data JPA (used to interact with relational DBs via ORM) -->
 		<dependency>
@@ -94,6 +103,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- Actuator for health monitoring -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<dependency>
