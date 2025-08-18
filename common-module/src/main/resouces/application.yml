@@ -1,0 +1,2 @@
+jwt:
+  secret: "2SgX1+NxT1Zje9p6qR1aOYa3+fZK9KZd6SeZXYMgzo4="  # Base64-encoded
