@@ -15,20 +15,35 @@
 	<artifactId>Hostelgrid-Backend-Springboot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
 	<name>Hostelgrid Backend Springboot</name>
 	<description>Hostelgrid Backend for Spring Boot</description>
 	<url/>
+
+    <!-- License Information -->
 	<licenses>
-		<license/>
+		<license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
 	</licenses>
+
+    <!-- Developer Information -->
 	<developers>
-		<developer/>
+		<developer>
+		    <id> HostelGrid</id>
+			<name> HostelGrid Team</name>
+			<email> support@hostelgrid.com</email>
+		</developer>
 	</developers>
+
+    <!-- Source Control Management -->
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+        <connection>scm:git:https://github.com/ayyappa65/hostelgrid_backend_springboot.git</connection>
+        <developerConnection>scm:git:ssh://github.com/ayyappa65/hostelgrid_backend_springboot.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/ayyappa65/hostelgrid_backend_springboot</url>
 	</scm>
 
 	<!-- Managing Modules accordingly based on functionality -->
@@ -37,6 +52,7 @@
 		<module>service-registry</module>
 		<module>api-gateway</module>
 		<module>auth-service</module>
+		<module>notification-service</module>
 	</modules>
 
 	<!-- Managing Dependency Management for Modules -->
@@ -110,6 +126,20 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+
+
+		<!-- Apache Kafka for Asynchronous Messaging for event-driven architecture -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <!-- Spring Email for Sending Emails -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+		
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

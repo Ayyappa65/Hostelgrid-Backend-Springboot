@@ -19,6 +19,7 @@ import com.hostelgrid.authservice.dto.LoginResponse;
 import com.hostelgrid.authservice.dto.SignUpRequest;
 import com.hostelgrid.authservice.model.User;
 import com.hostelgrid.authservice.repository.UserRepository;
+import com.hostelgrid.authservice.service.KafkaProducerService;
 import com.hostelgrid.common.response.MessageResponse;
 import com.hostelgrid.common.security.JwtTokenProvider;
 
@@ -35,15 +36,18 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final KafkaProducerService kafkaProducerService;
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtTokenProvider jwtTokenProvider,
                           UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          KafkaProducerService kafkaProducerService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     /**
@@ -51,6 +55,8 @@ public class AuthController {
      *
      * @param request DTO with user details
      * @return Response with success or error message
+     *
+     * sends a registration event to Kafka
      */
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> register(@RequestBody @Valid SignUpRequest request) {
@@ -70,7 +76,15 @@ public class AuthController {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+       
+        // Publish user registration event to Kafka
+        log.info("Publishing user registration event for email: {}", savedUser.getEmail());
+        kafkaProducerService.publishUserRegistration(
+            savedUser.getEmail(), 
+            savedUser.getUsername(), 
+            savedUser.getPhoneNumber()
+        );
 
         log.info("User registered successfully: {}", request.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("User registered successfully"));

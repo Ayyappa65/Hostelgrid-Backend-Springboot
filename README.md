@@ -38,6 +38,15 @@ Authentication microservice handling user login, registration, and JWT token man
 - Role-based access control (STUDENT, ADMIN, OWNER)
 - Secure password handling
 
+### notification-service
+Event-driven notification microservice for email and messaging.
+
+**Features:**
+- Kafka event consumption
+- Email notifications (welcome emails)
+- Message tracking and retry logic
+- Async processing with idempotency
+
 ### common-module
 Shared utilities and components across all microservices.
 
@@ -45,6 +54,7 @@ Shared utilities and components across all microservices.
 - JWT token provider and validation
 - Common security configurations
 - Shared DTOs and utilities
+- Event classes for Kafka messaging
 
 ## Tech Stack
 
@@ -57,7 +67,9 @@ Shared utilities and components across all microservices.
 - **Spring Data JPA** - Database operations
 - **Spring Boot Actuator** - Health monitoring & metrics
 - **JWT** - Token-based authentication
+- **Apache Kafka** - Event streaming platform
 - **MySQL** - Database
+- **JavaMail** - Email sending
 - **Lombok** - Code generation
 - **Maven** - Dependency management
 
@@ -77,23 +89,29 @@ User entity with:
    - Maven 3.6+
 
 2. **Setup Database:**
-   - Create MySQL database: `hostelgrid_auth_db`
-   - Update credentials in `auth-service/src/main/resources/application.yml`
+   - Create MySQL databases: `hostelgrid_auth_db`, `hostelgrid_notification_db`
+   - Update credentials in respective service application.yml files
 
-3. **Build and Run:**
+3. **Setup Kafka:**
+   - Start Kafka server on localhost:9092
+   - Topics are auto-created: `user-registration`
+
+4. **Build and Run:**
    ```bash
    mvn clean install
    
    # Start services in order:
-   mvn spring-boot:run -pl service-registry    # Port 8761
-   mvn spring-boot:run -pl api-gateway         # Port 8080
-   mvn spring-boot:run -pl auth-service        # Port 8081
+   mvn spring-boot:run -pl service-registry      # Port 8761
+   mvn spring-boot:run -pl api-gateway           # Port 8080
+   mvn spring-boot:run -pl auth-service          # Port 8081
+   mvn spring-boot:run -pl notification-service # Port 8082
    ```
 
-4. **Access Points:**
+5. **Access Points:**
    - API Gateway: http://localhost:8080
    - Eureka Dashboard: http://localhost:8761 (admin:Admin@123)
    - Auth Service: http://localhost:8081
+   - Notification Service: http://localhost:8082
 
 ## Project Structure
 
@@ -115,6 +133,7 @@ Hostelgrid-Backend-Springboot/
 |
 ├── common-module/                   # Shared components
 │   ├── src/main/java/com/hostelgrid/common/
+│   │   ├── events/                  # Kafka event classes
 │   │   ├── exception/               # Global exception handling
 │   │   ├── response/                # Common response DTOs
 │   │   └── security/                # JWT utilities
@@ -128,7 +147,18 @@ Hostelgrid-Backend-Springboot/
 │   │   ├── model/                   # JPA entities
 │   │   ├── repository/              # Data access layer
 │   │   ├── security/                # Custom security components
+│   │   ├── service/                 # Business logic & Kafka producers
 │   │   └── AuthServiceApplication.java
+│   ├── src/main/resources/application.yml
+│   └── pom.xml
+|
+├── notification-service/            # Notification microservice
+│   ├── src/main/java/com/hostelgrid/notification/
+│   │   ├── listener/                # Kafka event listeners
+│   │   ├── model/                   # JPA entities
+│   │   ├── repository/              # Data access layer
+│   │   ├── service/                 # Email & notification services
+│   │   └── NotificationServiceApplication.java
 │   ├── src/main/resources/application.yml
 │   └── pom.xml
 |
@@ -143,20 +173,31 @@ Hostelgrid-Backend-Springboot/
 - `POST http://localhost:8080/api/v1/auth/register` - User registration
 - `GET http://localhost:8080/api/auth-service/**` - Dynamic routing to auth-service
 
+
+
 ### Health Monitoring
 - Auth Service: `http://localhost:8081/actuator/health`
+- Notification Service: `http://localhost:8082/actuator/health`
 - API Gateway: `http://localhost:8080/actuator/health`
 - Service Registry: `http://localhost:8761/actuator/health`
-- Via Gateway: `http://localhost:8080/api/auth-service/actuator/health`
+- Via Gateway: `http://localhost:8080/api/{service-name}/actuator/health`
 
 ### Additional Actuator Endpoints
 - `/actuator/info` - Application information
 - `/actuator/metrics` - Application metrics
 - `/actuator/gateway` (API Gateway only) - Gateway routes info
 
+
 ### Direct Access
 - Auth Service: `http://localhost:8081/api/v1/auth/**`
 - Eureka Dashboard: `http://localhost:8761` (admin:Admin@123)
+
+
+### Event-Driven Architecture
+- **Kafka Topics:** `user-registration`
+- **Event Flow:** User registration → Kafka event → Welcome email
+- **Features:** Async processing, retry logic, idempotency
+
 
 ### Service Discovery
 - All registered services automatically available via gateway
