@@ -2,6 +2,7 @@ package com.hostelgrid.authservice.model;
 
 import java.time.LocalDateTime;
 
+import com.hostelgrid.common.security.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

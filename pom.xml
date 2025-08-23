@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		 <version>3.4.8</version> <!-- compatible with Spring Cloud 2024.0.0 -->
+		 <version>3.4.9</version> <!-- compatible with Spring Cloud 2024.0.0 -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -53,6 +53,9 @@
 		<module>api-gateway</module>
 		<module>auth-service</module>
 		<module>notification-service</module>
+		<module>hostel-service</module>
+		<module>student-service</module>
+		<module>billing-service</module>
 	</modules>
 
 	<!-- Managing Dependency Management for Modules -->

@@ -14,11 +14,19 @@ spring:
           lower-case-service-id: true
       routes:
 
-        # Authentication Service
+        # Authentication Service (Public)
         - id: auth-service
           uri: lb://auth-service
           predicates:
             - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=0
+
+        # Hostel Service (Protected)
+        - id: hostel-service
+          uri: lb://hostel-service
+          predicates:
+            - Path=/api/v1/hostels/**
           filters:
             - StripPrefix=0
 

@@ -1,6 +1,6 @@
 package com.hostelgrid.authservice.dto;
 
-import com.hostelgrid.authservice.model.Role;
+import com.hostelgrid.common.security.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

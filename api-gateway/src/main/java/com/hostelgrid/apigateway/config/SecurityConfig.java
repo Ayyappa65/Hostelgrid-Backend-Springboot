@@ -14,6 +14,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+/**
+ * Security configuration for API Gateway
+ * This configuration sets up security filters for the API Gateway, including CORS and authentication.
+ * It allows public access to certain APIs and requires authentication for others.
+ * we check authentication for all requests with JWT tokens.
+ * jwtAuthenticationFilter is used to validate the JWT token and set the authentication context for the request.
+ */
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
@@ -43,8 +50,8 @@ public class SecurityConfig {
                         // Swagger / API Docs (optional)
                         .pathMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 
-                        // All other APIs require authentication
-                        .anyExchange().authenticated()
+                        // All other APIs are handled by JWT filter
+                        .anyExchange().permitAll()
                 )
                 .build();
     }
