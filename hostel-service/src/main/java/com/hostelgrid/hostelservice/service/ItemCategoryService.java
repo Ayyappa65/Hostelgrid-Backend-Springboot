@@ -6,7 +6,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hostelgrid.common.exception.ResourceNotFoundException;
+import com.hostelgrid.hostelservice.model.Branch;
 import com.hostelgrid.hostelservice.model.ItemCategory;
+import com.hostelgrid.hostelservice.repository.BranchRepository;
 import com.hostelgrid.hostelservice.repository.ItemCategoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemCategoryService {
     
     private final ItemCategoryRepository categoryRepository;
-    
+
+    private final BranchRepository branchRepository;
+
     /**
      * Create a new item category.
      * @param categoryName - Name of the category
@@ -33,14 +38,14 @@ public class ItemCategoryService {
      */
     public ItemCategory createCategory(String categoryName, String description) {
         log.info("Creating new category: {}", categoryName);
-        
-        // Check if category already exists
-        if (categoryRepository.existsByCategoryNameIgnoreCase(categoryName)) {
-            log.warn("Category creation failed - already exists: {}", categoryName);
-            throw new IllegalArgumentException("Category already exists: " + categoryName);
-        }
-        
+
+        Branch branch = branchRepository.findById(1L).orElseThrow(() -> {
+            log.error("Branch not found for ID: {}", 1L);
+            return new ResourceNotFoundException("Branch not found: " + 1L);
+        });
+
         ItemCategory category = new ItemCategory();
+        category.setBranch(branch);
         category.setCategoryName(categoryName.trim());
         category.setDescription(description);
         category.setIsActive(true);
@@ -56,10 +61,10 @@ public class ItemCategoryService {
      * @return List of active categories
      */
     @Transactional(readOnly = true)
-    public List<ItemCategory> getAllActiveCategories() {
-        log.debug("Fetching all active categories");
-        List<ItemCategory> categories = categoryRepository.findAllActiveCategories();
-        log.debug("Found {} active categories", categories.size());
+    public List<ItemCategory> getAllCategoriesByBranchId(Long branchId) {
+        log.debug("Fetching all categories for branch ID: {}", branchId);
+        List<ItemCategory> categories = categoryRepository.findAllByBranch_BranchId(branchId);
+        log.debug("Found {} categories for branch ID: {}", categories.size(), branchId);
         return categories;
     }
     
@@ -129,12 +134,53 @@ public class ItemCategoryService {
         ItemCategory category = categoryRepository.findById(id)
             .orElseThrow(() -> {
                 log.error("Category not found for deactivation: {}", id);
-                return new IllegalArgumentException("Category not found: " + id);
-            });
-        
-        category.setIsActive(false);
+                    return new ResourceNotFoundException("Category not found: " + id);
+    });
+            
+        category.setIsActive(!category.getIsActive());
         categoryRepository.save(category);
         
         log.info("Category deactivated successfully: {}", id);
+    }
+    
+    /**
+     * Get all active categories as DTOs.
+     * @return List of category response DTOs
+     */
+    @Transactional(readOnly = true)
+    public List<com.hostelgrid.hostelservice.dto.ItemCategoryDto.ItemCategoryResponseDto> getAllCategoriesDtoByBranchId(Long branchId) {
+        log.info("Fetching all categories as DTOs for branch ID: {}", branchId);
+        List<ItemCategory> categories = getAllCategoriesByBranchId(branchId);
+        return categories.stream()
+                .map(this::convertToResponseDto)
+                .collect(java.util.stream.Collectors.toList());
+    }
+    
+    /**
+     * Find category by ID as DTO.
+     * @param id - Category ID
+     * @return Optional category response DTO
+     */
+    @Transactional(readOnly = true)
+    public Optional<com.hostelgrid.hostelservice.dto.ItemCategoryDto.ItemCategoryResponseDto> findByIdDto(Long id) {
+        log.info("Finding category by ID as DTO: {}", id);
+        return findById(id).map(this::convertToResponseDto);
+    }
+    
+    /**
+     * Convert ItemCategory entity to response DTO.
+     * @param category - ItemCategory entity
+     * @return ItemCategoryResponseDto
+     */
+    private com.hostelgrid.hostelservice.dto.ItemCategoryDto.ItemCategoryResponseDto convertToResponseDto(ItemCategory category) {
+        com.hostelgrid.hostelservice.dto.ItemCategoryDto.ItemCategoryResponseDto dto = 
+            new com.hostelgrid.hostelservice.dto.ItemCategoryDto.ItemCategoryResponseDto();
+        dto.setId(category.getId());
+        dto.setCategoryName(category.getCategoryName());
+        dto.setDescription(category.getDescription());
+        dto.setIsActive(category.getIsActive());
+        dto.setCreatedAt(category.getCreatedAt());
+        dto.setUpdatedAt(category.getUpdatedAt());
+        return dto;
     }
 }

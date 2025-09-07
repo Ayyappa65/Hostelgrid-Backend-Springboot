@@ -26,7 +26,7 @@ spring:
         - id: hostel-service
           uri: lb://hostel-service
           predicates:
-            - Path=/api/v1/hostels/**
+            - Path=/api/v1/hostels/**, /api/v1/branches/**, /api/v1/categories/**
           filters:
             - StripPrefix=0
 

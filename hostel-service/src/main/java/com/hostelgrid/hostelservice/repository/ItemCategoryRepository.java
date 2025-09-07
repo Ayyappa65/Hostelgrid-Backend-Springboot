@@ -26,12 +26,13 @@ public interface ItemCategoryRepository extends JpaRepository<ItemCategory, Long
     Optional<ItemCategory> findByCategoryNameIgnoreCase(@Param("categoryName") String categoryName);
     
     /**
-     * Find all active categories.
-     * @return List of active categories
+     * Find all categories by branch ID.
+     * @param branchId - Branch ID
+     * @return List of ItemCategory
      */
-    @Query("SELECT ic FROM ItemCategory ic WHERE ic.isActive = true ORDER BY ic.categoryName")
-    List<ItemCategory> findAllActiveCategories();
-    
+    @Query("SELECT ic FROM ItemCategory ic WHERE ic.branch.id = :branchId ORDER BY ic.categoryName")
+    List<ItemCategory> findAllByBranch_BranchId(@Param("branchId") Long branchId);
+
     /**
      * Check if category name exists (case-insensitive).
      * @param categoryName - Category name to check

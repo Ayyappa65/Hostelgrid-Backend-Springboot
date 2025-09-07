@@ -16,6 +16,7 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
   # Security Configuration for Eureka
+  # To secure Eureka, configure Spring Security in your application instead of using 'eureka.security' properties.
   security:
     username: admin
     password: Admin@123

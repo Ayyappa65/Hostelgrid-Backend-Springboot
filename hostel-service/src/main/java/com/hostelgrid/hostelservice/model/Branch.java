@@ -46,7 +46,7 @@ public class Branch {
     private Hostel hostel;
     
     @Column(nullable = false, length = 100)
-    private String name;
+    private String branchName;
 
     @Column(name = "email", length = 100)
     private String email;
@@ -61,6 +61,8 @@ public class Branch {
     @Enumerated(EnumType.STRING)
     private Status status = Status.ACTIVE;
     
+    @Column(name = "description")
+    private String description;
 
     /* Relationship with Building
      * OneToMany relationship with Building entity
