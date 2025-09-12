@@ -1,12 +1,20 @@
+# Server Configuration
+server:
+  port: ${NOTIFICATION_SERVICE_PORT:8084}
+
+# Spring Application Configuration
 spring:
   application:
     name: notification-service
+
+  # Database Configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/hostelgrid_notification_db
-    username: root
-    password: Y21CSE031
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${NOTIFICATION_SERVICE_DB_NAME:hostelgrid_notification_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Y21CSE031}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # JPA Configuration
   jpa:
     hibernate:
       ddl-auto: update
@@ -48,15 +56,12 @@ spring:
           starttls:
             enable: true
 
-# Server Configuration
-server:
-  port: 8082
 
-# Eureka Configuration
+# Eureka Client Configuration
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:${SERVICE_REGISTRY:8761}/eureka/
   instance:
     prefer-ip-address: true
 

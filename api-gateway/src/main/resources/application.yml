@@ -1,6 +1,8 @@
+# API Gateway Configuration
 server:
-  port: 8080
+  port: ${API_GATEWAY_PORT:8080}
 
+# Spring Application Configuration
 spring:
   application:
     name: api-gateway
@@ -12,6 +14,8 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+
+      # Route Configuration for different microservices
       routes:
 
         # Authentication Service (Public)
@@ -19,6 +23,14 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=0
+        
+        # Billing Service (Protected)
+        - id: billing-service
+          uri: lb://billing-service
+          predicates:
+            - Path=/api/v1/billing/**
           filters:
             - StripPrefix=0
 
@@ -29,10 +41,18 @@ spring:
             - Path=/api/v1/hostels/**, /api/v1/branches/**, /api/v1/categories/**
           filters:
             - StripPrefix=0
+        
+        # Student Service (Protected)
+        - id: student-service
+          uri: lb://student-service
+          predicates:
+            - Path=/api/v1/students/**
+          filters:
+            - StripPrefix=0
 
-        # Service Registry
+        # Service Registry (Eureka)
         - id: service-registry
-          uri: http://localhost:8761
+          uri: http://localhost:${SERVICE_REGISTRY:8761}/eureka/
           predicates:
             - Path=/eureka/**
 
@@ -40,10 +60,44 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:${SERVICE_REGISTRY:8761}/eureka/
   instance:
     prefer-ip-address: true
 
+#  profiles:
+#    active: dev  # Default to dev profile
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html  # Serve Swagger UI at API Gateway
+    urls:                   # List of microservices' OpenAPI docs to aggregate in Swagger UI 
+      - url: /api-docs/v1/auth-service
+        name: Auth Service
+      - url: /api-docs/v1/billing-service
+        name: Billing Service
+      - url: /api-docs/v1/hostel-service
+        name: Hostel Service
+      - url: /api-docs/v1/notification-service
+        name: Notification Service
+      - url: /api-docs/v1/student-service
+        name: Student Service
+  api-docs:
+    enabled: true
+    path: /api-docs/v1  # Unified OpenAPI docs at API Gateway
+    # group-configurations: it can be used to define groups of services
+    # groups:
+    #   auth-service:
+    #     paths-to-match: /api/v1/auth/**
+    #   billing-service:
+    #     paths-to-match: /api/v1/billings/**
+    #   hostel-service:
+    #     paths-to-match: /api/v1/hostels/**, /api/v1/branches/**, /api/v1/categories/**
+    #   notification-service:
+    #     paths-to-match: /api/v1/notifications/**
+    #   student-service:
+    #     paths-to-match: /api/v1/students/**, /api/v1/rooms/**
+ 
 # Management Endpoints
 management:
   endpoints:

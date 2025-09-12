@@ -1,9 +1,13 @@
+# Eureka Service Registry Configuration
 server:
-  port: 8761
-  
+  port: ${SERVICE_REGISTRY:8761}
+
+# Spring Application Configuration 
 spring:
   application:
     name: service-registry
+
+#  profiles: 
 eureka:
   instance:
     hostname: localhost
@@ -18,10 +22,11 @@ eureka:
   # Security Configuration for Eureka
   # To secure Eureka, configure Spring Security in your application instead of using 'eureka.security' properties.
   security:
-    username: admin
-    password: Admin@123
+    username: ${EUREKA_USERNAME:admin}
+    password: ${EUREKA_PASSWORD:Admin@123}
 
-# Management Endpoints
+
+# Management Configuration for Actuator
 management:
   endpoints:
     web:

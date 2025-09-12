@@ -6,6 +6,7 @@ import com.hostelgrid.hostelservice.enums.Status;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
@@ -47,7 +48,7 @@ public class HostelDto {
     @Data
     public static class HostelUpdateDto {
         
-        @NotBlank(message = "Hostel ID is required")
+        @NotNull(message = "Hostel ID is required")
         private Long id;
         
         @NotBlank(message = "Hostel name is required")

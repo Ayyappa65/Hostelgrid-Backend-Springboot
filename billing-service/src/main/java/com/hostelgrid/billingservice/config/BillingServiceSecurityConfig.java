@@ -1,4 +1,4 @@
-package com.hostelgrid.hostelservice.config;
+package com.hostelgrid.billingservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import lombok.extern.slf4j.Slf4j;
 
 /*
- * Security configuration for the Hostel Service.
+ * Security configuration for the Billing Service.
  * Authentication: Handled at API Gateway (JWT validation, user identity)
  * HTTP Security: All requests permitted (no authentication check at service level)
  * Method Authorization: Still enforced via @PreAuthorize annotations
@@ -26,15 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
-public class HostelServiceSecurityConfig {
-
-
+public class BillingServiceSecurityConfig {
+    
     /**
      * OpenAPI configuration.
      * Sets up API info, server, and security schemes for JWT Bearer authentication.
      * Applies security globally to all endpoints.
      * Configures OpenAPI documentation.
-     * To access the Swagger UI, visit http://localhost:8083/swagger-ui/index.html
+     * To access the Swagger UI, visit http://localhost:8082/swagger-ui/index.html
      */
     @Bean
     public OpenAPI v1OpenAPI() {
@@ -43,10 +42,10 @@ public class HostelServiceSecurityConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Hostel Service API")
+                        .title("Billing Service API")
                         .version("v1")
-                        .description("Version 1 of Hostel Service API"))
-                .addServersItem(new Server().url("http://localhost:8080").description("Hostel Service API v1"))
+                        .description("Version 1 of Billing Service API"))
+                .addServersItem(new Server().url("http://localhost:8080").description("Billing Service API v1"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName)) // Apply globally
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes(securitySchemeName,
@@ -66,12 +65,11 @@ public class HostelServiceSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        log.debug("Configuring security filter chain of hostel-service");
-        
+        log.debug("Configuring security filter chain of billing-service");
+
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/**").permitAll() // Allow access to actuator endpoints
-                .requestMatchers("/api/public/**").permitAll() // Allow access to public API endpoints
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                 //this is the correct approach for gateway-authenticated microservices.

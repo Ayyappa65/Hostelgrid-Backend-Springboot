@@ -71,6 +71,13 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Swagger/OpenAPI for Gateway -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>2.7.0</version>
+        </dependency>
         
     </dependencies>
 </project>

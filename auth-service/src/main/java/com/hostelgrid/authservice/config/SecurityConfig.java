@@ -6,22 +6,30 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.hostelgrid.common.security.JwtTokenProvider;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+
+/**
+ * Security configuration for the application.
+ * Sets up JWT authentication, password encoding, and security filter chain.
+ * Also configures OpenAPI documentation with security schemes.
+ */
 @Configuration
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    //private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        //this.userDetailsService = userDetailsService;
     }
 
     /**
@@ -33,22 +41,40 @@ public class SecurityConfig {
     }
 
     /**
-     * DaoAuthenticationProvider to connect UserDetailsService + PasswordEncoder.
-     */
-    // @Bean
-    // public DaoAuthenticationProvider authenticationProvider() {
-    //     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    //     authProvider.setUserDetailsService(userDetailsService);
-    //     authProvider.setPasswordEncoder(passwordEncoder());
-    //     return authProvider;
-    // }
-
-    /**
      * AuthenticationManager bean.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
+    }
+
+    /**
+     * OpenAPI configuration.
+     * Sets up API info, server, and security schemes for JWT Bearer authentication.
+     * Applies security globally to all endpoints.
+     * Configures OpenAPI documentation.
+     * To access the Swagger UI, visit http://localhost:8081/swagger-ui/index.html
+     */
+    @Bean
+    public OpenAPI v1OpenAPI() {
+        // Define security scheme name
+        final String securitySchemeName = "bearerAuth";
+
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Auth Service API")
+                        .version("v1")
+                        .description("Version 1 of Auth Service API"))
+                .addServersItem(new Server().url("http://localhost:8080").description("Auth Service API v1"))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName)) // Apply globally
+                .components(new io.swagger.v3.oas.models.Components()
+                        .addSecuritySchemes(securitySchemeName,
+                                new SecurityScheme()
+                                        .name(securitySchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                        ));
     }
 
     /**
@@ -62,6 +88,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()  // Login, Register, Refresh open
                         .requestMatchers("/actuator/**").permitAll()  // Allow actuator endpoints
+                        .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Swagger open
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), 

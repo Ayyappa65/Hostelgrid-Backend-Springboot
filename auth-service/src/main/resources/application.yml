@@ -1,15 +1,25 @@
+# Server Configuration
+server:
+  port: ${AUTH_SERVICE_PORT:8081}
+
+# Spring Application Configuration
 spring:
   application:
     name: auth-service
+
+  # Profiles Configuration for different environments by using Spring Profiles by default 'dev' profile is active
   profiles:
     active:
     - dev
+  
+  # Database Configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/hostelgrid_auth_db
-    username: root
-    password: Y21CSE031
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${AUTH_SERVICE_DB_NAME:hostelgrid_auth_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Y21CSE031}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # JPA Configuration
   jpa:
     hibernate:
       ddl-auto: update # options: none, update, create, create-drop
@@ -20,22 +30,22 @@ spring:
 
   # Kafka Configuration
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-server:
-  port: 8081
 
+# Eureka Client Configuration
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:${SERVICE_REGISTRY:8761}/eureka/
   instance:
     prefer-ip-address: true
 
-# Management Endpoints
+
+# Management Configuration for Actuator
 management:
   endpoints:
     web:
@@ -45,3 +55,56 @@ management:
   endpoint:
     health:
       show-details: always
+
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs/v1
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /api-docs/v1/swagger-config
+    url: /api-docs/v1
+    display-request-duration: true
+
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${AUTH_SERVICE_DB_NAME:hostelgrid_auth_db}?useSSL=true&allowPublicKeyRetrieval=false
+
+---
+# Test Profile
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:

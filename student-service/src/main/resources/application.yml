@@ -1,28 +1,39 @@
+# Server Configuration
+server:
+  port: ${STUDENT_SERVICE_PORT:8085}
+
+
+# Spring Configuration
 spring:
   application:
     name: student-service
+
+  # Database Configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/hostelgrid_student_db
-    username: root
-    password: Y21CSE031
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${STUDENT_SERVICE_DB_NAME:hostelgrid_student_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Y21CSE031}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
+  
+  # JPA Configuration
+  jpa:            
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-server:
-  port: 8084
 
+# Eureka Client Configuration
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:${SERVICE_REGISTRY:8761}/eureka/
   instance:
     prefer-ip-address: true
 
+
+# Management Configuration for Actuator
 management:
   endpoints:
     web:

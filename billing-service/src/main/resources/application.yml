@@ -1,11 +1,20 @@
+# Server Configuration
+server:
+  port: ${BILLING_SERVICE_PORT:8082}
+
+# Spring Application Configuration
 spring:
   application:
     name: billing-service
+
+  # Database Configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/hostelgrid_billing_db
-    username: root
-    password: Y21CSE031
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${BILLING_SERVICE_DB_NAME:hostelgrid_billing_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Y21CSE031}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA Configuration
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,16 +22,28 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-server:
-  port: 8085
-
+# Eureka Client Configuration
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:${SERVICE_REGISTRY:8761}/eureka/
   instance:
     prefer-ip-address: true
 
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs/v1
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /api-docs/v1/swagger-config
+    url: /api-docs/v1
+    display-request-duration: true
+    
+# Management Configuration for Actuator
 management:
   endpoints:
     web:
