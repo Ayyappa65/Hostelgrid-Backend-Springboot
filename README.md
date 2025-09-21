@@ -325,6 +325,27 @@ User entity with:
 
 
 
+
+## API Documentation (Swagger)
+
+### Centralized API Documentation
+- **API Gateway Swagger UI**: http://localhost:8080/swagger-ui.html
+- **Aggregated API Docs**: All microservices APIs in one place
+
+### Individual Service Documentation
+- **Auth Service**: http://localhost:8081/swagger-ui.html
+- **Billing Service**: http://localhost:8082/swagger-ui.html
+- **Hostel Service**: http://localhost:8083/swagger-ui.html
+- **Notification Service**: http://localhost:8084/swagger-ui.html
+- **Student Service**: http://localhost:8085/swagger-ui.html
+
+### Features
+- **JWT Authentication**: Bearer token support in Swagger UI
+- **Interactive Testing**: Test APIs directly from documentation
+- **Request/Response Examples**: Complete API specifications
+- **Multi-Environment Support**: Gateway URL configuration
+
+
 ## Project Structure
 
 ```

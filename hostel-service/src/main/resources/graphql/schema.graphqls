@@ -1,0 +1,48 @@
+type Query {
+    hostels: [Hostel]
+    hostel(id: ID!): Hostel
+    activeHostels: [Hostel]
+}
+
+type Mutation {
+    createHostel(input: CreateHostelDto!): String
+    updateHostel(input: HostelUpdateDto!): String
+    deleteHostel(id: ID!): String
+}
+
+type Hostel {
+    id: ID!
+    name: String!
+    email: String!
+    contactNumber: String!
+    description: String
+    status: Status!
+    createdAt: String
+    updatedAt: String
+}
+
+type MessageResponse {
+    message: String!
+}
+
+enum Status {
+    ACTIVE
+    INACTIVE
+    DELETED
+}
+
+input CreateHostelDto {
+    name: String!
+    email: String!
+    contactNumber: String!
+    description: String
+}
+
+input HostelUpdateDto {
+    id: ID!
+    name: String!
+    email: String!
+    contactNumber: String!
+    description: String
+}
+

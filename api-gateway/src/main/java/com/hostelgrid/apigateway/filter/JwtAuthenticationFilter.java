@@ -66,6 +66,12 @@ public class JwtAuthenticationFilter implements WebFilter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+
+    /* JWT Authentication Filter 
+     * Validates JWT tokens and sets user context for downstream services.
+     * Bypasses authentication for public endpoints.
+     * Logs authentication attempts and errors.
+    */
     @Override
     public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -124,12 +130,14 @@ public class JwtAuthenticationFilter implements WebFilter {
             SecurityContext securityContext = new SecurityContextImpl(authentication);
 
             // Propagate user identity to downstream services
+            /*
+             * Here we add custom headers to the request to forward user context to downstream services(client services).
+             */
             ServerHttpRequest modifiedRequest = request.mutate()
                     .header(HttpHeaders.AUTHORIZATION, authHeader)
                     .header("X-User-Id", userId)
                     .header("X-User-Email", userEmail)
                     .header("X-User-Role", userRole)
-                    .header("X-Authenticated", "true")
                     .build();
 
             return chain.filter(exchange.mutate().request(modifiedRequest).build())

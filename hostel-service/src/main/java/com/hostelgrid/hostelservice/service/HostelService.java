@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,16 +149,38 @@ public class HostelService {
     }
     
     /**
-     * Get all hostels.
-     * @return List of hostel response DTOs
+     * Get all hostels with pagination.
+     * @param pageable - Pagination information
+     * @return Page of hostel response DTOs
+     */
+    @Transactional(readOnly = true)
+    public Page<HostelDto.HostelResponseDto> getAllHostels(Pageable pageable, String search) {
+        log.info("Fetching all hostels - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<Hostel> hostels;
+        if (search != null && !search.trim().isEmpty()) {
+            log.info("Searching hostels by name: {}", search);
+            hostels = hostelRepository.findByNameContainingIgnoreCase(search, pageable);
+        } else {
+            hostels = hostelRepository.findAll(pageable);
+        }
+        log.info("Found {} hostels", hostels.getTotalElements());
+        
+        return hostels.map(this::convertToResponseDto);
+    }
+
+      /**
+     * Get all hostels with pagination.
+     * @param pageable - Pagination information
+     * @return Page of hostel response DTOs
      */
     @Transactional(readOnly = true)
     public List<HostelDto.HostelResponseDto> getAllHostels() {
         log.info("Fetching all hostels");
-        
+
         List<Hostel> hostels = hostelRepository.findAll();
         log.info("Found {} hostels", hostels.size());
-        
+
         return hostels.stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
@@ -183,16 +207,32 @@ public class HostelService {
     
     
     /**
-     * Get all active hostels.
-     * @return List of active hostel response DTOs
+     * Get all active hostels with pagination.
+     * @param pageable - Pagination information
+     * @return Page of active hostel response DTOs
+     */
+    @Transactional(readOnly = true)
+    public Page<HostelDto.HostelResponseDto> getAllActiveHostels(Pageable pageable) {
+        log.info("Fetching all active hostels - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        
+        Page<Hostel> hostels = hostelRepository.findAllActiveHostels(pageable);
+        log.info("Found {} active hostels", hostels.getTotalElements());
+        
+        return hostels.map(this::convertToResponseDto);
+    }
+
+    /**
+     * Get all active hostels with pagination.
+     * @param pageable - Pagination information
+     * @return Page of active hostel response DTOs
      */
     @Transactional(readOnly = true)
     public List<HostelDto.HostelResponseDto> getAllActiveHostels() {
         log.info("Fetching all active hostels");
-        
+
         List<Hostel> hostels = hostelRepository.findAllActiveHostels();
         log.info("Found {} active hostels", hostels.size());
-        
+
         return hostels.stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());

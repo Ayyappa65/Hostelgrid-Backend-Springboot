@@ -1,5 +1,6 @@
 package com.hostelgrid.hostelservice.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -7,6 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.hostelgrid.hostelservice.filter.UserContextFilter;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -27,6 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class HostelServiceSecurityConfig {
+
+    @Autowired
+    private UserContextFilter userContextFilter;
 
 
     /**
@@ -73,11 +80,13 @@ public class HostelServiceSecurityConfig {
                 .requestMatchers("/actuator/**").permitAll() // Allow access to actuator endpoints
                 .requestMatchers("/api/public/**").permitAll() // Allow access to public API endpoints
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
+                
                 //this is the correct approach for gateway-authenticated microservices.
                 // All requests are permitted; method-level security still applies
                 .anyRequest().permitAll()
-            );
+            )
+            // Add custom filter to extract user context from headers set by API Gateway
+            .addFilterBefore(userContextFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
