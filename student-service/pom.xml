@@ -15,6 +15,10 @@
     <name>Student Service</name>
     <description>Student Management Microservice</description>
     
+    <build>
+        <finalName>student-service</finalName>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>com.hostergrid</groupId>

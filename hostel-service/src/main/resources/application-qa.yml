@@ -1,0 +1,26 @@
+# QA Profile Configuration
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop   # delete everything → recreate schema → drop again on shutdown.
+  datasource:
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3307}/${HOSTEL_SERVICE_DB_NAME:hostelgrid_test_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:test_user}
+    password: ${DB_PASSWORD:test_pass}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: ${HOSTEL_SERVICE_PORT:8085}
+  
+logging:
+  level:
+    root: INFO
+    com.hostelgrid: INFO
+    org.springframework.graphql: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

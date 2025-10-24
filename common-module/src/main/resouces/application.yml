@@ -1,2 +1,2 @@
 jwt:
-  secret: "2SgX1+NxT1Zje9p6qR1aOYa3+fZK9KZd6SeZXYMgzo4="  # Base64-encoded
+  secret: "SG9zdGVsR3JpZFNlY3VyZUpXVEtleTI1NkJpdHNMb25nRW5vdWdoRm9ySE1BQ1NIQTI1NkFsZ29yaXRobUV4dHJhTG9uZ1N0cmluZ0ZvclNlY3VyaXR5UHVycG9zZXM="  # Base64-encoded 256-bit key

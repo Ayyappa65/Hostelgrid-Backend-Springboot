@@ -6,15 +6,10 @@ server:
 spring:
   application:
     name: hostel-service
+  profiles:
+    active: ${SPRING_PROFILE_ACTIVE:dev}  # default = dev if not specified
 
-  # Database Configuration
-  datasource:
-    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${HOSTEL_SERVICE_DB_NAME:hostelgrid_hostel_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:Y21CSE031}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  # JPA Configuration
+  # Common JPA Config
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,7 +18,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-  # GraphQL Configuration
+  # Common GraphQL Config
   graphql:
     graphiql:
       enabled: true
@@ -44,7 +39,7 @@ eureka:
   instance:
     prefer-ip-address: true
 
-# # Management Configuration for Actuator
+# Management Configuration for Actuator
 management:
   endpoints:
     web:

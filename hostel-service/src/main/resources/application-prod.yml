@@ -1,0 +1,26 @@
+# Production Profile Configuration
+spring:
+  jpa:  # Optional: enable stricter Hibernate
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:mysql://${IP:prod-db-host}:${DB_PORT:3306}/${HOSTEL_SERVICE_DB_NAME:hostelgrid_prod_db}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: ${HOSTEL_SERVICE_PORT:9090}
+
+logging:
+  level:
+    root: WARN
+    com.hostelgrid: INFO
+    org.springframework.graphql: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

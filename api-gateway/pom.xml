@@ -18,6 +18,10 @@
     <name>API Gateway</name>
     <description>Spring Cloud Gateway for routing and security</description>
 
+    <build>
+        <finalName>api-gateway</finalName>
+    </build>
+    
     <dependencies>
 
         <!-- Spring Cloud Gateway -->

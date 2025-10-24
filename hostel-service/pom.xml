@@ -18,6 +18,10 @@
     <name>Hostel Service</name>
     <description>Hostel Management Microservice</description>
     
+    <build>
+        <finalName>hostel-service</finalName>
+    </build>
+    
     <dependencies>
        
         <!--adding common-module dependency-->

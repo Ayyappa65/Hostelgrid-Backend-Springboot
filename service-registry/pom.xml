@@ -18,6 +18,10 @@
     <name>Service Registry</name>
     <description>Eureka Service Registry for microservices discovery</description>
 
+    <build>
+        <finalName>service-registry</finalName>
+    </build>
+    
     <dependencies>
             <!-- Eureka Server -->
         <dependency>

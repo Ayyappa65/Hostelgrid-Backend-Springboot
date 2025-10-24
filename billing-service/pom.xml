@@ -15,6 +15,10 @@
     <name>Billing Service</name>
     <description>Billing and Payments Microservice</description>
     
+    <build>
+        <finalName>billing-service</finalName>
+    </build>
+    
     <dependencies>
         <dependency>
             <groupId>com.hostergrid</groupId>

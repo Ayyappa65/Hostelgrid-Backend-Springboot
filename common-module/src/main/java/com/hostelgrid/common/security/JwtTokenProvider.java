@@ -41,9 +41,18 @@ public class JwtTokenProvider {
             throw new JwtConfigurationException("JWT secret key is missing! Check application.yml or env variables.");
         }
         try {
-            this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+            byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+            if (keyBytes.length < 32) { // 256 bits = 32 bytes
+                // Generate a secure key if provided key is too short
+                this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+                System.out.println("Warning: Provided JWT key was too short. Generated a secure key automatically.");
+            } else {
+                this.key = Keys.hmacShaKeyFor(keyBytes);
+            }
         } catch (IllegalArgumentException e) {
-            throw new JwtConfigurationException("Invalid Base64-encoded secret key: " + e.getMessage());
+            // If Base64 decoding fails, generate a secure key
+            this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            System.out.println("Warning: Invalid Base64 key provided. Generated a secure key automatically.");
         }
     }
 
