@@ -3,6 +3,8 @@ package com.hostelgrid.hostelservice.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -77,4 +79,20 @@ public interface HostelRepository extends JpaRepository<Hostel, Long> {
      */
     @Query("SELECT h FROM Hostel h WHERE h.status = 'ACTIVE' ORDER BY h.name")
     List<Hostel> findAllActiveHostels();
+    
+    /**
+     * Find all active hostels with pagination.
+     * @param pageable - Pagination information
+     * @return Page of active hostels
+     */
+    @Query("SELECT h FROM Hostel h WHERE h.status = 'ACTIVE' ORDER BY h.name")
+    Page<Hostel> findAllActiveHostels(Pageable pageable);
+    
+    /**
+     * Find hostels by name containing keyword with pagination (case-insensitive).
+     * @param search - Search keyword
+     * @param pageable - Pagination information
+     * @return Page of matching hostels
+     */
+    Page<Hostel> findByNameContainingIgnoreCase(String search, Pageable pageable);
 }

@@ -23,6 +23,19 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+  # GraphQL Configuration
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+    path: /graphql
+
+# External Services Configuration
+external:
+  services:
+    hostel-service:
+      graphql-url: http://localhost:8083/graphql
+
 
 # Eureka Client Configuration
 eureka:

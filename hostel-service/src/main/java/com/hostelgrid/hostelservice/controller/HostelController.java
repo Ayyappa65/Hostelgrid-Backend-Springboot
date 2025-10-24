@@ -3,6 +3,9 @@ package com.hostelgrid.hostelservice.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -122,19 +125,34 @@ public class HostelController {
     }
     
     /**
-     * Get all hostels.
+     * Get all hostels with pagination.
      * Only users with HOSTEL_VIEW permission can access.
      * 
-     * @return List of all hostels
+     * @param page - Page number (0-based)
+     * @param size - Page size
+     * @return Paginated list of all hostels
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<List<HostelResponseDto>> getAllHostels() {
-        log.info("REST request to get all hostels");
-        
-        List<HostelResponseDto> hostels = hostelService.getAllHostels();
+    public ResponseEntity<List<HostelResponseDto>> getAllHostels(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false , defaultValue = "id") String sortBy,
+            @RequestParam(required = false , defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search) {
+
+        log.info("REST request to get all hostels - page: {}, size: {}", page, size);
+
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        log.info("Sort by: {}, Direction: {}", sortBy, sortDir);
+
+        // Create pageable object
+        // Added -1 to page because in UI we are sending 1 based page index but in backend its 0 based index.
+        Pageable pageable = PageRequest.of(page - 1, size, sort); 
+        List<HostelResponseDto> hostels = hostelService.getAllHostels(pageable, search).getContent();  // Extract content from Page other wise it returns Page object in response (Page<HostelResponseDto>)
         log.info("Retrieved {} hostels via REST", hostels.size());
-        
+
         return ResponseEntity.ok(hostels);
     }
     
@@ -175,13 +193,18 @@ public class HostelController {
      * or 
      * 
      * @PreAuthorize("hasAnyRole('ADMIN')")
-     * 
      * @return List of active hostels
      */
     @GetMapping("/active") 
-    public ResponseEntity<List<HostelDto.HostelResponseDto>> getAllActiveHostels() {
-        log.info("REST request to get all active hostels");
-        return ResponseEntity.ok(hostelService.getAllActiveHostels());
+    public ResponseEntity<List<HostelDto.HostelResponseDto>> getAllActiveHostels(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        log.info("REST request to get all active hostels - page: {}, size: {}", page, size);
+        
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Directly returning content list instead of Page object to avoid pagination metadata in response
+        return ResponseEntity.ok(hostelService.getAllActiveHostels(pageable).getContent());
     }
     
     

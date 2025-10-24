@@ -41,6 +41,22 @@ spring:
             - Path=/api/v1/hostels/**, /api/v1/branches/**, /api/v1/categories/**
           filters:
             - StripPrefix=0
+            
+        # GraphQL Service - Hostel (Public)
+        - id: graphql-hostel-service
+          uri: lb://hostel-service
+          predicates:
+            - Path=/graphql, /graphiql/**
+          filters:
+            - StripPrefix=0
+            
+        # GraphQL Service - Student (Public)
+        - id: graphql-student-service
+          uri: lb://student-service
+          predicates:
+            - Path=/student/graphql, /student/graphiql/**
+          filters:
+            - StripPrefix=1
         
         # Student Service (Protected)
         - id: student-service
