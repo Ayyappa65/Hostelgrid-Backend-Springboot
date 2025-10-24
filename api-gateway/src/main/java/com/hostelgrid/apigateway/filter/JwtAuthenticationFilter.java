@@ -5,6 +5,7 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -78,9 +79,24 @@ public class JwtAuthenticationFilter implements WebFilter {
         String path = request.getURI().getPath();
         log.info("Request path: {}", path);
 
+        // Allow preflight CORS requests to pass through
+        /*
+         * CORS preflight requests use the OPTIONS method to check server permissions.
+         * We let these requests pass through without authentication.
+         * This avoids unnecessary authentication checks for preflight requests.
+         * The actual request will be authenticated separately.
+         */
+        if(exchange.getRequest().getMethod() == HttpMethod.OPTIONS){
+            return chain.filter(exchange);
+        }
+
         // Allow public endpoints to bypass authentication
         if (path.startsWith("/api/v1/auth/") || 
             path.startsWith("/actuator/") ||
+            path.startsWith("/graphql") ||
+            path.startsWith("/graphiql") ||
+            path.startsWith("/student/graphql") ||
+            path.startsWith("/student/graphiql") ||
             path.endsWith("/active")) {
             log.debug("Bypassing authentication for public endpoint: {}", path);
             return chain.filter(exchange);

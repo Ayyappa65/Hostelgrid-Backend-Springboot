@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		 <version>3.4.10</version> <!-- compatible with Spring Cloud 2024.0.0 -->
+		 <version>3.4.11</version> <!-- compatible with Spring Cloud 2024.0.0 -->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -149,8 +149,8 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.7.0</version>
         </dependency>
-		
 
+       <!-- JUnit 5 (Testing Framework) this dependency is for unit testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -168,7 +168,12 @@
         </dependency>
 	</dependencies>
 
+   <!-- Configurations for Build and Repositories -->
 	<build>
+
+		<!-- Plugin configurations for compiling and packaging -->
+		<!-- Maven Compiler Plugin -->
+		<!-- It configures the Java compiler version -->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

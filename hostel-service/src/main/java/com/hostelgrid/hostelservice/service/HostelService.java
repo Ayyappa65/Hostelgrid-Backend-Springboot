@@ -20,7 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service class for Hostel operations.
- * Handles business logic for hostel management with DTO conversions.
+ * Handles business logic for hostel management with DTO conversions.   
+ * Transactional methods ensure data integrity.(create, update, delete) it is used to manage transactions in the service layer.
+ * it ensures that a series of operations either complete successfully as a whole or are rolled back in case of an error.
+ * Asynchronous methods improve performance for non-blocking operations.
  */
 @Service
 @RequiredArgsConstructor
