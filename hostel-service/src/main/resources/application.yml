@@ -7,7 +7,7 @@ spring:
   application:
     name: hostel-service
   profiles:
-    active: ${SPRING_PROFILE_ACTIVE:dev}  # default = dev if not specified
+    active: ${SPRING_PROFILES_ACTIVE:dev}  # default = dev if not specified
 
   # Common JPA Config
   jpa:

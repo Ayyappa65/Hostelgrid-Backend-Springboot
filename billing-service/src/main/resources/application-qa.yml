@@ -1,0 +1,27 @@
+# QA Profile Configuration
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+        ddl-auto: create-drop
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${BILLING_SERVICE_DB_NAME:hostelgrid_billing_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: ${BILLING_SERVICE_PORT:8082}
+
+  
+logging:
+  level:
+    root: INFO
+    com.hostelgrid: INFO
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

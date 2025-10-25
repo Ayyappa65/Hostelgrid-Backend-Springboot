@@ -6,13 +6,8 @@ server:
 spring:
   application:
     name: notification-service
-
-  # Database Configuration
-  datasource:
-    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${NOTIFICATION_SERVICE_DB_NAME:hostelgrid_notification_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:Y21CSE031}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   # JPA Configuration
   jpa:

@@ -7,13 +7,8 @@ server:
 spring:
   application:
     name: student-service
-
-  # Database Configuration
-  datasource:
-    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${STUDENT_SERVICE_DB_NAME:hostelgrid_student_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:Y21CSE031}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   
   # JPA Configuration
   jpa:            
@@ -52,3 +47,15 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs/v1
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /api-docs/v1/swagger-config
+    url: /api-docs/v1
+    display-request-duration: true

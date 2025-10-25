@@ -1,19 +1,18 @@
 # Development Profile Configuration
 spring:
   datasource:
-    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${HOSTEL_SERVICE_DB_NAME:hostelgrid_hostel_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${NOTIFICATION_SERVICE_DB_NAME:hostelgrid_notification_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
-  port: ${HOSTEL_SERVICE_PORT:8083}
+  port: ${NOTIFICATION_SERVICE_PORT:8084}
 
 logging:
   level:
     root: INFO
     com.hostelgrid: DEBUG
-    org.springframework.graphql: DEBUG
     com.netflix.discovery: WARN
     com.zaxxer.hikari: WARN
     org.apache.http: WARN

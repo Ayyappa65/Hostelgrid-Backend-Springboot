@@ -1,0 +1,36 @@
+# Development Profile Configuration
+spring:
+  datasource:
+    url: jdbc:mysql://${IP:localhost}:${DB_PORT:3306}/${AUTH_SERVICE_DB_NAME:hostelgrid_auth_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: ${AUTH_SERVICE_PORT:8081}
+
+logging:
+  level:
+    root: INFO
+    "com.hostelgrid": DEBUG         # This sets the logging level to DEBUG only for your application’s package com.hostelgrid
+
+    # It sets Eureka logs to WARN — meaning it will only log warnings and errors, not info/debug messages.
+    # Eureka often logs many INFO messages (heartbeats, registrations, etc.), which can clutter logs.
+    # So WARN keeps logs clean.
+    com.netflix.discovery: WARN  
+
+    # This controls logging for HikariCP, the default JDBC connection pool used by Spring Boot.
+    # Hikari logs can be quite verbose at INFO or DEBUG levels (connection creation, pool status, etc.).
+    # Setting to WARN means it will only log issues (like connection failures, timeouts).    
+    com.zaxxer.hikari: WARN 
+
+    # This controls logging for the Apache HttpClient library, used internally for making HTTP calls.
+    # Prevents unnecessary INFO-level logs about each HTTP request/response.
+    # You will only see warnings (e.g., failed connections, protocol errors).
+    org.apache.http: WARN   
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
